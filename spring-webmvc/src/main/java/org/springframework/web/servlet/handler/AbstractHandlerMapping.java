@@ -73,6 +73,9 @@ import org.springframework.web.util.UrlPathHelper;
 public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 		implements HandlerMapping, Ordered, BeanNameAware {
 
+	/**
+	 * 默认处理器
+	 */
 	@Nullable
 	private Object defaultHandler;
 
@@ -80,8 +83,21 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 
+	/**
+	 * 配置的拦截器数组.
+	 *
+	 * 在 {@link #initInterceptors()} 方法中，初始化到 {@link #adaptedInterceptors} 中
+	 *
+	 * 添加方式有两种：
+	 *
+	 * 1. {@link #setInterceptors(Object...)} 方法
+	 * 2. {@link #extendInterceptors(List)} 方法
+	 */
 	private final List<Object> interceptors = new ArrayList<>();
 
+	/**
+	 * 初始化后的拦截器 HandlerInterceptor 数组
+	 */
 	private final List<HandlerInterceptor> adaptedInterceptors = new ArrayList<>();
 
 	private CorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();

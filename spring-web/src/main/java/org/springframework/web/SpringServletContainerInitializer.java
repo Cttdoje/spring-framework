@@ -143,7 +143,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 			throws ServletException {
 
 		List<WebApplicationInitializer> initializers = new LinkedList<>();
-
+		// @HandlesTypes 指定了需要处理的class，对 webAppInitializerClasses 中进行判断元素类型是否属于指定的class
 		if (webAppInitializerClasses != null) {
 			for (Class<?> waiClass : webAppInitializerClasses) {
 				// Be defensive: Some servlet containers provide us with invalid classes,
@@ -167,6 +167,8 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 		}
 
 		servletContext.log(initializers.size() + " Spring WebApplicationInitializers detected on classpath");
+		//WebApplicationInitializer 类是 spring 用来初始化 web 环境的委托者类
+		//这里调用了 WebApplicationInitializer 的实现类进行初始化 web 环境
 		AnnotationAwareOrderComparator.sort(initializers);
 		for (WebApplicationInitializer initializer : initializers) {
 			initializer.onStartup(servletContext);

@@ -20,6 +20,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
+ * SpringMVC启动加载入口
+ * Root WebApplicationContext 容器的初始化，通过 ContextLoaderListener 来实现。
+ * 在 Servlet 容器启动时，例如 Tomcat、Jetty 启动，则会被 ContextLoaderListener 监听到，
+ * 从而调用 #contextInitialized(ServletContextEvent event) 方法，初始化 Root WebApplicationContext 容器。
  * Bootstrap listener to start up and shut down Spring's root {@link WebApplicationContext}.
  * Simply delegates to {@link ContextLoader} as well as to {@link ContextCleanupListener}.
  *
