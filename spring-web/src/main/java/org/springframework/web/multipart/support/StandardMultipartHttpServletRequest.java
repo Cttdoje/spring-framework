@@ -90,25 +90,34 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 	}
 
 
+	/**
+	 * 解析请求
+	 */
 	private void parseRequest(HttpServletRequest request) {
 		try {
 			Collection<Part> parts = request.getParts();
 			this.multipartParameterNames = new LinkedHashSet<>(parts.size());
 			MultiValueMap<String, MultipartFile> files = new LinkedMultiValueMap<>(parts.size());
 			for (Part part : parts) {
+				//获得 Content-Disposition 头的值
 				String headerValue = part.getHeader(HttpHeaders.CONTENT_DISPOSITION);
+				//获得 ContentDisposition 对象
 				ContentDisposition disposition = ContentDisposition.parse(headerValue);
+				//获得文件名
 				String filename = disposition.getFilename();
 				if (filename != null) {
+					//文件名非空，说明是文件参数，则创建 StandardMultipartFile 对象，添加到 files 中
 					if (filename.startsWith("=?") && filename.endsWith("?=")) {
 						filename = MimeDelegate.decode(filename);
 					}
 					files.add(part.getName(), new StandardMultipartFile(part, filename));
 				}
 				else {
+					//文件名为空，说明是普通参数，则添加 part.name 到 multipartParameterNames 中
 					this.multipartParameterNames.add(part.getName());
 				}
 			}
+			//设置到 multipartFiles 属性
 			setMultipartFiles(files);
 		}
 		catch (Throwable ex) {

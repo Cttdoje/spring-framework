@@ -55,6 +55,10 @@ public class HandlerExecutionChain {
 	@Nullable
 	private List<HandlerInterceptor> interceptorList;
 
+	/**
+	 * 已执行HandlerInterceptor#preHandle的位置
+	 * 主要用于实现applyPostHandle的逻辑
+	 */
 	private int interceptorIndex = -1;
 
 

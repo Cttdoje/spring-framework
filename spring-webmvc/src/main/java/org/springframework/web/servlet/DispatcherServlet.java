@@ -496,6 +496,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * 初始化组件
 	 * Initialize the strategy objects that this servlet uses.
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
@@ -518,6 +519,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	private void initMultipartResolver(ApplicationContext context) {
 		try {
+			// 获得 multipartResolver 对应的 MultipartResolver Bean 对象
+			//默认情况下，multipartResolver 对应的是 StandardServletMultipartResolver 类的 Bean 对象
 			this.multipartResolver = context.getBean(MULTIPART_RESOLVER_BEAN_NAME, MultipartResolver.class);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Detected " + this.multipartResolver);
@@ -1011,6 +1014,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 			try {
 				//检查是否是上传请求。如果是，则封装成 MultipartHttpServletRequest 对象
+				//multipartRequestParsed标识是否是上传请求
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
@@ -1037,6 +1041,8 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// 执行拦截器 preHandle 方法
+				// 遍历拦截器列表，执行HandlerInterceptor#preHandle
+				// 当执行失败会执行拦截器列表的HandlerInterceptor#afterCompletion，此方法执行出现异常并不会退出，仅是记录日志
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
@@ -1181,6 +1187,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @see MultipartResolver#resolveMultipart
 	 */
 	protected HttpServletRequest checkMultipart(HttpServletRequest request) throws MultipartException {
+		// isMultipart 方法判断 请求头中 Content-Type 为 multipart/
 		if (this.multipartResolver != null && this.multipartResolver.isMultipart(request)) {
 			if (WebUtils.getNativeRequest(request, MultipartHttpServletRequest.class) != null) {
 				if (request.getDispatcherType().equals(DispatcherType.REQUEST)) {
@@ -1193,6 +1200,8 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 			else {
 				try {
+					//初始化MultipartHttpServletRequest，默认在初始化时不进行解析请求
+					//解析请求会进行文件名和文件处理
 					return this.multipartResolver.resolveMultipart(request);
 				}
 				catch (MultipartException ex) {

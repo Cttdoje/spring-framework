@@ -60,6 +60,9 @@ import org.springframework.web.multipart.MultipartResolver;
  */
 public class StandardServletMultipartResolver implements MultipartResolver {
 
+	/**
+	 * 是否延迟解析：是否在需要获得对应文件时，再进行文件的解析
+	 */
 	private boolean resolveLazily = false;
 
 
