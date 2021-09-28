@@ -64,6 +64,9 @@ public class HandlerMethod {
 	/** Logger that is available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	// 多种赋值情况
+	// 1. 将 beanName 赋值给 bean 属性，说明 beanFactory + bean 的方式，获得 handler 对象
+	// 2. 直接赋值 bean
 	private final Object bean;
 
 	@Nullable

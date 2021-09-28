@@ -55,21 +55,29 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public final class RequestMappingInfo implements RequestCondition<RequestMappingInfo> {
 
+	/** 名字 */
 	@Nullable
 	private final String name;
 
+	/** 请求路径的条件 */
 	private final PatternsRequestCondition patternsCondition;
 
+	/** 请求方法的条件 */
 	private final RequestMethodsRequestCondition methodsCondition;
 
+	/** 参数的条件 */
 	private final ParamsRequestCondition paramsCondition;
 
+	/** 请求头的条件 */
 	private final HeadersRequestCondition headersCondition;
 
+	/** 可消费的 Content-Type 的条件 */
 	private final ConsumesRequestCondition consumesCondition;
 
+	/** 可生产的 Content-Type 的条件 */
 	private final ProducesRequestCondition producesCondition;
 
+	/** 自定义的条件 */
 	private final RequestConditionHolder customConditionHolder;
 
 
@@ -217,6 +225,8 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	@Override
 	@Nullable
 	public RequestMappingInfo getMatchingCondition(HttpServletRequest request) {
+		// 如果一个 @RequestMapping(value = "user/login") 注解，并未写 RequestMethod 的条件，岂不是会报空？
+		// 实际上不会。在这种情况下，会创建一个 RequestMethodsRequestCondition 对象，并且在匹配时，直接返回自身
 		RequestMethodsRequestCondition methods = this.methodsCondition.getMatchingCondition(request);
 		if (methods == null) {
 			return null;
@@ -246,6 +256,10 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 			return null;
 		}
 
+		// 创建匹配的 RequestMappingInfo 对象。
+		// 为什么要创建 RequestMappingInfo 对象呢？
+		// 因为当前 RequestMappingInfo 对象，一个 methodsCondition 可以配置 GET、POST、DELETE 等等条件，
+		// 但是实际就匹配一个请求类型，此时 methods 只代表其匹配的那个。
 		return new RequestMappingInfo(this.name, patterns,
 				methods, params, headers, consumes, produces, custom.getCondition());
 	}
